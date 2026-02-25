@@ -1,13 +1,11 @@
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-
 def chunk_pages(pages, chunk_size=600, chunk_overlap=80):
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
         separators=["\n\n", "\n", ".", " "]
     )
-    
     chunks = []
     for page in pages:
         page_chunks = splitter.split_text(page["text"])

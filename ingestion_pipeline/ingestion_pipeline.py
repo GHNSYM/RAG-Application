@@ -1,9 +1,9 @@
 import os
-from extract_text import extract_pages
-from chunk_pages import chunk_pages
-from embed_and_store import embed_and_store
+from ingestion_pipeline.extract_text import extract_pages
+from ingestion_pipeline.chunk_pages import chunk_pages
+from ingestion_pipeline.embed_and_store import embed_and_store
 
-PDF_FOLDER = "assets/"  # all pdfs in this folder will get processed
+PDF_FOLDER = "../assets/"  # all pdfs in this folder will get processed
 
 #Extract all PDFs
 all_chunks = []
@@ -20,6 +20,6 @@ for pdf_file in pdf_files:
 
 print(f"\nTotal chunks across all PDFs: {len(all_chunks)}")
 
-#Embed chunks with local model and store in vectordb
+#Embed chunks with local model and store in supabase vectordb
 embed_and_store(all_chunks)                 
 
