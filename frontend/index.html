@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drishtee RAG App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <h1>Drishtee RAG App</h1>
+      <p>Retrieval Augmented Generation</p>
+    </div>
+
+    <div class="form-wrapper">
+      <div class="input-group">
+        <label for="query-input">Your Query</label>
+        <textarea
+          id="query-input"
+          placeholder="Ask a question about the document..."
+        ></textarea>
+      </div>
+
+      <div id="error-container"></div>
+
+      <div class="button-group">
+        <button class="submit-btn" id="submit-btn">
+          <span class="spinner" id="spinner" style="display: none;"></span>
+          <span id="btn-text">Submit</span>
+        </button>
+        <button class="clear-btn" id="clear-btn">Clear</button>
+      </div>
+
+      <div id="output-container"></div>
+    </div>
+  </div>
+
+  <script>
+    const queryInput = document.getElementById('query-input');
+    const submitBtn = document.getElementById('submit-btn');
+    const clearBtn = document.getElementById('clear-btn');
+    const spinner = document.getElementById('spinner');
+    const btnText = document.getElementById('btn-text');
+    const errorContainer = document.getElementById('error-container');
+    const outputContainer = document.getElementById('output-container');
+
+    const BACKEND_URL = 'http://localhost:5000'; // Change this to your backend URL
+
+    // Clear form
+    clearBtn.addEventListener('click', () => {
+      queryInput.value = '';
+      outputContainer.innerHTML = '';
+      errorContainer.innerHTML = '';
+    });
+
+    // Handle submit
+    submitBtn.addEventListener('click', async () => {
+      const query = queryInput.value.trim();
+
+      // Validation
+      if (!query) {
+        showError('Please enter a query');
+        return;
+      }
+
+      // Show loading state
+      submitBtn.disabled = true;
+      spinner.style.display = 'inline-block';
+      btnText.textContent = 'Processing...';
+      errorContainer.innerHTML = '';
+      outputContainer.innerHTML = '';
+
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/query`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            query: query,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        showOutput(data.response || data.result);
+      } catch (error) {
+        showError(
+          `Error: ${error.message}. Make sure your backend is running at ${BACKEND_URL}`
+        );
+        console.error('Error:', error);
+      } finally {
+        submitBtn.disabled = false;
+        spinner.style.display = 'none';
+        btnText.textContent = 'Submit';
+      }
+    });
+
+    // Allow submit with Enter key (Ctrl+Enter for textarea)
+    queryInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && e.ctrlKey && !submitBtn.disabled) {
+        submitBtn.click();
+      }
+    });
+
+    function showError(message) {
+      errorContainer.innerHTML = `<div class="error">${message}</div>`;
+    }
+
+    function showOutput(result) {
+      outputContainer.innerHTML = `
+        <div class="output-section">
+          <div class="output-title">Response</div>
+          <div class="output-content">${escapeHtml(result)}</div>
+        </div>
+      `;
+    }
+
+    function escapeHtml(unsafe) {
+      return unsafe
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>
