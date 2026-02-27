@@ -6,7 +6,7 @@ def extract_pages(pdf_path, doc_name):
     pages = []
     for i, page in enumerate(doc):
         text = page.get_text("text")
-        text = re.sub(r'\u200b', '', text)  
+        text = re.sub(r'\u200b', '', text)
         text = re.sub(r'[ \t]+', ' ', text)
         text = re.sub(r'\n{3,}', '\n\n', text)
         pages.append({

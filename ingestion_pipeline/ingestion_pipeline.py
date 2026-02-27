@@ -1,7 +1,7 @@
 import os
-from ingestion_pipeline.extract_text import extract_pages
-from ingestion_pipeline.chunk_pages import chunk_pages
-from ingestion_pipeline.embed_and_store import embed_and_store
+from extract_text import extract_pages
+from chunk_pages import chunk_pages
+from embed_and_store import embed_and_store
 
 PDF_FOLDER = "../assets/"  # all pdfs in this folder will get processed
 

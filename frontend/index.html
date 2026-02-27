@@ -18,7 +18,7 @@
         <label for="query-input">Your Query</label>
         <textarea
           id="query-input"
-          placeholder="Ask a question about the document..."
+          placeholder="Ask a question about Drishtee..."
         ></textarea>
       </div>
 
@@ -45,7 +45,7 @@
     const errorContainer = document.getElementById('error-container');
     const outputContainer = document.getElementById('output-container');
 
-    const BACKEND_URL = 'http://localhost:5000'; // Change this to your backend URL
+    const BACKEND_URL = 'http://127.0.0.1:8000'; // Change this to backend URL
 
     // Clear form
     clearBtn.addEventListener('click', () => {
@@ -72,13 +72,13 @@
       outputContainer.innerHTML = '';
 
       try {
-        const response = await fetch(`${BACKEND_URL}/api/query`, {
+        const response = await fetch(`${BACKEND_URL}/ask`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            query: query,
+            question: query,
           }),
         });
 
@@ -87,7 +87,7 @@
         }
 
         const data = await response.json();
-        showOutput(data.response || data.result);
+        showOutput(data.answer);
       } catch (error) {
         showError(
           `Error: ${error.message}. Make sure your backend is running at ${BACKEND_URL}`

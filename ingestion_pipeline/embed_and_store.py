@@ -10,8 +10,8 @@ def embed_and_store(chunks):
     total = len(chunks)
     for i, chunk in enumerate(chunks):
         response = ollama.embeddings(
-            model="nomic-embed-text",
-            prompt=chunk["text"]
+            model="nomic-embed-text", 
+            prompt="search_document: " + chunk["text"]  
         )
         embedding = response["embedding"]
         
